@@ -44,9 +44,9 @@ export const SCENES = {
 
 export const MY_DOC_LINK = 'https://docs.google.com/spreadsheets/d/1kofFdAl6c58w0BjCkaiNaSdQ5LBR8NwgURfd2ajZJpw/edit#gid=597154558'
 
-export const REPLY_KEYBOARD_VALUES = [
-  '⬅️Выдаткі па катэгорыях',
-  '➡️Даходы па катэгорыях'
+export const REPLY_KEYBOARD_VALUES = (mainWalletBalance) => [
+  ['⬅️Выдаткі па катэгорыях', '➡️Даходы па катэгорыях'],
+  [`⚖️Мой баланс: ${mainWalletBalance}`]
 ]
 export const REPORT_NAMES = [
   '⬅️Выдаткі па катэгорыях',
