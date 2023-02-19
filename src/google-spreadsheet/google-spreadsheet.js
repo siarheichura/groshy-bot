@@ -1,7 +1,7 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const dayjs = require('dayjs')
-const customParseFormat = require('dayjs/plugin/customParseFormat');
-dayjs.extend(customParseFormat);
+const customParseFormat = require('dayjs/plugin/customParseFormat')
+dayjs.extend(customParseFormat)
 const { CONFIG } = require('../config')
 const { DATE_FORMAT, SHEETS } = require('../constants')
 
@@ -69,24 +69,26 @@ const getReportByCategories = async (isExpense, period) => {
   await sheet.loadHeaderRow()
   const [date, category, sum] = sheet.headerValues
 
-  const currDate = dayjs('16.02.2023', DATE_FORMAT)
-
   const rows = await sheet.getRows()
 
-  const result = rows.filter(row => dayjs(row[date], DATE_FORMAT).isSame(currDate, 'month'))
+  const operationsByPeriod = rows.filter(row =>
+    dayjs(row[date], DATE_FORMAT).isSame(dayjs(period, DATE_FORMAT), 'month')
+  )
 
-  const resultResult = []
+  const result = [] // {category: string, sum: number}
 
-  result.forEach(r => {
-    const index = resultResult.map(rr => rr.category).indexOf(r[category])
+  operationsByPeriod.forEach(operation => {
+    const index = result.map(r => r.category).indexOf(operation[category])
+    const operationSum = +operation[sum].replace(/,/g, '.')
+
     if (index >= 0) {
-      resultResult[index].sum = +resultResult[index].sum + +r[sum]
+      result[index].sum = +result[index].sum + operationSum
     } else {
-      resultResult.push({category: r[category], sum: r[sum]})
+      result.push({ category: operation[category], sum: operationSum })
     }
   })
 
-  return resultResult
+  return result.sort((a, b) => b.sum - a.sum)
 }
 
 module.exports = {
