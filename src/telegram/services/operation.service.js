@@ -3,8 +3,7 @@ import { OPERATION_TYPES } from '../../constants.js'
 export const getOperationDataFromMessage = async (message) => {
   let [sum, ...comment] = message.split(' ')
 
-  if (sum) {
-    // replace ',' ---> '.'
+  if (!isNaN(+sum)) {
     sum = sum.replace(/,/g, '.')
   } else {
     return
@@ -28,7 +27,7 @@ export const getAddOperationReplyMessage = (operation, wallets) => {
     `<b>💵Сума:</b> <pre>${operation.sum} ${operation.currency}</pre>\n` +
     `<b>💬Каментар:</b> <pre>${operation.comment || ' '}</pre>\n` +
     `<code>----------------------------------</code>\n` +
-    `<b>⚖️ МОЙ БАЛАНС:</b>\n` +
+    `<b>⚖️Мой баланс:</b>\n` +
     `${balanceString}` +
     `<code>----------------------------------</code>\n`
 }
