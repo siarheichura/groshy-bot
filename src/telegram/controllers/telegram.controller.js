@@ -1,7 +1,7 @@
-const { REPLY_KEYBOARD_VALUES, MY_DOC_LINK, SCENES } = require('../../constants')
-const { Markup } = require('telegraf')
+import { Markup } from 'telegraf'
+import { REPLY_KEYBOARD_VALUES, MY_DOC_LINK, SCENES } from '../../constants.js'
 
-const startCommandHandler = async ctx => {
+export const startCommandHandler = async ctx => {
   await ctx.telegram.setMyCommands([
     { command: 'start', description: 'start command' }
   ])
@@ -15,9 +15,9 @@ const startCommandHandler = async ctx => {
   )
 }
 
-const hearsReportNameHandler = ctx => ctx.scene.enter(SCENES.REPORTS)
+export const hearsReportNameHandler = ctx => ctx.scene.enter(SCENES.REPORTS)
 
-const onTextHandler = (ctx, initialState) => {
+export const onTextHandler = (ctx, initialState) => {
   const { wallets, categories } = initialState
 
   ctx.session.wallets = wallets
@@ -27,10 +27,4 @@ const onTextHandler = (ctx, initialState) => {
   }
 
   return ctx.scene.enter(SCENES.OPERATION)
-}
-
-module.exports = {
-  startCommandHandler,
-  hearsReportNameHandler,
-  onTextHandler
 }

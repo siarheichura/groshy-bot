@@ -1,19 +1,15 @@
-const { Scenes } = require('telegraf')
-const { SCENES } = require('../../constants')
-const {
+import { Scenes } from 'telegraf'
+import { SCENES } from '../../constants.js'
+import {
   enterSceneHandler,
   categoryButtonClickHandler,
   cancelOperationHandler
-} = require('../controllers/operation.controller')
+} from '../controllers/operation.controller.js'
 
-const operationScene = new Scenes.BaseScene(SCENES.OPERATION)
+export const operationScene = new Scenes.BaseScene(SCENES.OPERATION)
 
 const includesCategoryRegExp = new RegExp('^category')
 
 operationScene.enter(async ctx => await enterSceneHandler(ctx))
 operationScene.action(includesCategoryRegExp, async ctx => await categoryButtonClickHandler(ctx))
 operationScene.action('DeleteLast', async ctx => await cancelOperationHandler(ctx))
-
-module.exports = {
-  operationScene
-}

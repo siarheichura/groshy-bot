@@ -1,9 +1,9 @@
-const { getOperationDataFromMessage, getAddOperationReplyMessage } = require('../services/operation.service')
-const { ERROR_MESSAGES } = require('../../constants')
-const { Markup } = require('telegraf')
-const { addOperation, getWallets, deleteLastOperation } = require('../../google-spreadsheet/google-spreadsheet')
+import { Markup } from 'telegraf'
+import { getOperationDataFromMessage, getAddOperationReplyMessage } from '../services/operation.service.js'
+import { ERROR_MESSAGES } from '../../constants.js'
+import { addOperation, getWallets, deleteLastOperation } from '../../google-spreadsheet/google-spreadsheet.js'
 
-const enterSceneHandler = async ctx => {
+export const enterSceneHandler = async ctx => {
   const { wallets } = ctx.session
   const mainWallet = wallets.find(wallet => wallet.isMain)
   const { text } = ctx.message
@@ -32,7 +32,7 @@ const enterSceneHandler = async ctx => {
   )
 }
 
-const categoryButtonClickHandler = async (ctx) => {
+export const categoryButtonClickHandler = async (ctx) => {
   const category = ctx.match.input.replace('category', '').trim()
 
   const operation = { ...ctx.session.operation, category }
@@ -50,17 +50,11 @@ const categoryButtonClickHandler = async (ctx) => {
   ctx.answerCbQuery()
 }
 
-const cancelOperationHandler = async (ctx) => {
+export const cancelOperationHandler = async (ctx) => {
   const { type } = ctx.session.operation
 
   await deleteLastOperation(type)
 
   ctx.answerCbQuery()
   ctx.editMessageText('❌ Адменена')
-}
-
-module.exports = {
-  enterSceneHandler,
-  categoryButtonClickHandler,
-  cancelOperationHandler
 }

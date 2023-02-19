@@ -1,14 +1,14 @@
-const { Telegraf, session, Scenes } = require('telegraf')
-const { CONFIG } = require('../config')
-const { operationScene } = require('./scenes/operation.scene')
-const { reportsScene } = require('./scenes/reports.scene')
-const { REPORT_NAMES } = require('../constants')
-const { getWallets, getAllCategories } = require('../google-spreadsheet/google-spreadsheet')
-const { startCommandHandler, hearsReportNameHandler, onTextHandler } = require('./controllers/telegram.controller')
+import { Telegraf, session, Scenes } from 'telegraf'
+import { CONFIG } from '../config.js'
+import { operationScene } from './scenes/operation.scene.js'
+import { reportsScene } from './scenes/reports.scene.js'
+import { REPORT_NAMES } from '../constants.js'
+import { getWallets, getAllCategories } from '../google-spreadsheet/google-spreadsheet.js'
+import { startCommandHandler, hearsReportNameHandler, onTextHandler } from './controllers/telegram.controller.js'
 
 const bot = new Telegraf(CONFIG.TELEGRAM_API_TOKEN)
 
-const startBot = async () => {
+export const startBot = async () => {
   const stage = new Scenes.Stage([operationScene, reportsScene])
 
   bot.use(session())
@@ -26,10 +26,3 @@ const startBot = async () => {
   process.once('SIGINT', () => bot.stop('SIGINT'))
   process.once('SIGTERM', () => bot.stop('SIGTERM'))
 }
-
-module.exports = {
-  startBot
-}
-
-
-

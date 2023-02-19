@@ -1,9 +1,9 @@
-const dayjs = require('dayjs')
-const { getReportByCategories } = require('../../google-spreadsheet/google-spreadsheet')
-const { Markup } = require('telegraf')
-const { getReportByCategoriesReplyMessage } = require('../services/reports.service')
+import dayjs from 'dayjs'
+import { Markup } from 'telegraf'
+import { getReportByCategories } from '../../google-spreadsheet/google-spreadsheet.js'
+import { getReportByCategoriesReplyMessage } from '../services/reports.service.js'
 
-const enterSceneHandler = async (ctx) => {
+export const enterSceneHandler = async (ctx) => {
   const match = ctx.match.input.toLowerCase()
   const isExpense = match.includes('выдаткі')
   const currDate = dayjs()
@@ -22,8 +22,4 @@ const enterSceneHandler = async (ctx) => {
     replyMessage,
     Markup.inlineKeyboard(keyboard, { columns: 2 }).resize()
   )
-}
-
-module.exports = {
-  enterSceneHandler
 }
