@@ -1,11 +1,7 @@
-const { Scenes } = require('telegraf')
-const { SCENES } = require('../../constants')
-const { enterSceneHandler } = require('../controllers/reports.controller')
+import { Scenes } from 'telegraf'
+import { SCENES } from '../../constants.js'
+import { enterSceneHandler } from '../controllers/reports.controller.js'
 
-const reportsScene = new Scenes.BaseScene(SCENES.REPORTS)
+export const reportsScene = new Scenes.BaseScene(SCENES.REPORTS)
 
 reportsScene.enter(async ctx => await enterSceneHandler(ctx))
-
-module.exports = {
-  reportsScene
-}

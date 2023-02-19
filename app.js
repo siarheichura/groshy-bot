@@ -1,5 +1,5 @@
-const { startBot } = require('./src/telegram/telegram')
-const { startSpreadsheet } = require('./src/google-spreadsheet/google-spreadsheet')
+import { startBot } from './src/telegram/telegram.js'
+import { startSpreadsheet } from './src/google-spreadsheet/google-spreadsheet.js'
 
 const startProject = async () => {
   try {

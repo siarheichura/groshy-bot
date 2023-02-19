@@ -1,13 +1,14 @@
-const { GoogleSpreadsheet } = require('google-spreadsheet')
-const dayjs = require('dayjs')
-const customParseFormat = require('dayjs/plugin/customParseFormat')
+import { GoogleSpreadsheet } from 'google-spreadsheet'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+import { CONFIG } from '../config.js'
+import { DATE_FORMAT, SHEETS } from '../constants.js'
+
 dayjs.extend(customParseFormat)
-const { CONFIG } = require('../config')
-const { DATE_FORMAT, SHEETS } = require('../constants')
 
 const doc = new GoogleSpreadsheet(CONFIG.GOOGLE_SPREADSHEET_ID)
 
-const startSpreadsheet = async () => {
+export const startSpreadsheet = async () => {
   await doc.useServiceAccountAuth({
     client_email: CONFIG.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     private_key: CONFIG.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
@@ -15,9 +16,9 @@ const startSpreadsheet = async () => {
   await doc.loadInfo()
 }
 
-const getSheetByIndex = (index) => doc.sheetsByIndex[index]
+export const getSheetByIndex = (index) => doc.sheetsByIndex[index]
 
-const getAllCategories = async () => {
+export const getAllCategories = async () => {
   const categoriesSheet = getSheetByIndex(SHEETS.CATEGORIES)
   await categoriesSheet.loadHeaderRow(2)
   const [name, type] = categoriesSheet.headerValues
@@ -25,7 +26,7 @@ const getAllCategories = async () => {
   return rows.map(r => ({ name: r[name], type: +r[type] }))
 }
 
-const getWallets = async () => {
+export const getWallets = async () => {
   const walletsSheet = getSheetByIndex(SHEETS.WALLETS)
   await walletsSheet.loadHeaderRow()
   const [name, isMain, tags, currency, balance] = walletsSheet.headerValues
@@ -42,7 +43,7 @@ const getWallets = async () => {
   })
 }
 
-const addOperation = async (operation) => {
+export const addOperation = async (operation) => {
   const sheet = operation.type ? getSheetByIndex(SHEETS.INCOMES) : getSheetByIndex(SHEETS.EXPENSES)
   await sheet.loadHeaderRow()
   const [date, category, sum, wallet, comment] = sheet.headerValues
@@ -57,14 +58,14 @@ const addOperation = async (operation) => {
   await sheet.addRow(operationToAdd)
 }
 
-const deleteLastOperation = async (type) => {
+export const deleteLastOperation = async (type) => {
   const sheet = type ? getSheetByIndex(SHEETS.INCOMES) : getSheetByIndex(SHEETS.EXPENSES)
   const rows = await sheet.getRows()
   const lastRowIndex = rows[rows.length - 1].rowIndex
   await sheet.clearRows({ start: lastRowIndex, end: lastRowIndex })
 }
 
-const getReportByCategories = async (isExpense, period) => {
+export const getReportByCategories = async (isExpense, period) => {
   const sheet = isExpense ? getSheetByIndex(SHEETS.EXPENSES) : getSheetByIndex(SHEETS.INCOMES)
   await sheet.loadHeaderRow()
   const [date, category, sum] = sheet.headerValues
@@ -89,14 +90,4 @@ const getReportByCategories = async (isExpense, period) => {
   })
 
   return result.sort((a, b) => b.sum - a.sum)
-}
-
-module.exports = {
-  startSpreadsheet,
-  getSheetByIndex,
-  addOperation,
-  deleteLastOperation,
-  getWallets,
-  getAllCategories,
-  getReportByCategories
 }

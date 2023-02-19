@@ -1,4 +1,4 @@
-const getReportByCategoriesReplyMessage = (data, isExpense, date, totalSum) => {
+export const getReportByCategoriesReplyMessage = (data, isExpense, date, totalSum) => {
   let string = ''
 
   data.forEach(item => string += `<pre>${item.category}: ${item.sum}</pre>\n`)
@@ -11,8 +11,4 @@ const getReportByCategoriesReplyMessage = (data, isExpense, date, totalSum) => {
     `<pre>----------------------------------</pre>\n` +
     `<b>Агульная сума: ${totalSum}</b>\n` +
     `<pre>----------------------------------</pre>`
-}
-
-module.exports = {
-  getReportByCategoriesReplyMessage
 }

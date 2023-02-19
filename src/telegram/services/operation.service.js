@@ -1,6 +1,6 @@
-const { OPERATION_TYPES } = require('../../constants')
+import { OPERATION_TYPES } from '../../constants.js'
 
-const getOperationDataFromMessage = async (message) => {
+export const getOperationDataFromMessage = async (message) => {
   let [sum, ...comment] = message.split(' ')
 
   if (sum) {
@@ -15,7 +15,7 @@ const getOperationDataFromMessage = async (message) => {
   return { sum, comment: comment.join(' '), type }
 }
 
-const getAddOperationReplyMessage = (operation, wallets) => {
+export const getAddOperationReplyMessage = (operation, wallets) => {
   let balanceString = ''
   wallets.forEach(wallet => {
     balanceString += `<b>${wallet.name}:</b> <pre>${wallet.balance} ${wallet.currency}</pre>\n`
@@ -31,9 +31,4 @@ const getAddOperationReplyMessage = (operation, wallets) => {
     `<b>⚖️ МОЙ БАЛАНС:</b>\n` +
     `${balanceString}` +
     `<code>----------------------------------</code>\n`
-}
-
-module.exports = {
-  getOperationDataFromMessage,
-  getAddOperationReplyMessage
 }
