@@ -51,7 +51,7 @@ export const addOperation = async (operation) => {
   const operationToAdd = {}
   operationToAdd[date] = dayjs().format(DATE_FORMAT)
   operationToAdd[category] = operation.category
-  operationToAdd[sum] = operation.sum
+  operationToAdd[sum] = operation.sum.replace('.', ',')
   operationToAdd[wallet] = operation.wallet
   operationToAdd[comment] = operation.comment
 
@@ -89,5 +89,7 @@ export const getReportByCategories = async (isExpense, period) => {
     }
   })
 
-  return result.sort((a, b) => b.sum - a.sum)
+  return result
+    .map(r => ({ ...r, sum: r.sum.toFixed(2) }))
+    .sort((a, b) => b.sum - a.sum)
 }
