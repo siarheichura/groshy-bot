@@ -1,22 +1,6 @@
-export const BASIC_CATEGORIES = [
-  '🥐 Прадукты',
-  '🏠 Кватэра',
-  '💃 Забавы',
-  '🏎️ Аўтамабіль',
-  '🚌 Транспорт',
-  '👕 Адзенне',
-  '🎁 Падарункі',
-  '💉 Лекі',
-  '🗑️ Страты',
-  '🧴 Гігіена',
-  '🧹 Гаспадарчыя тавары',
-  '💰 Іншае',
-
-  '💳 Зарплата',
-  '🎁 Падарункі',
-  '💼 Бізнэс',
-  '💰 Іншае'
-]
+export const BOT_COMMANDS = {
+  START: '/start'
+}
 
 export const ERROR_MESSAGES = {
   NO_SUM: 'Гэй, забыўся ўвесці суму'
@@ -38,11 +22,10 @@ export const SHEETS = {
 }
 
 export const SCENES = {
+  REGISTRATION: 'REGISTRATION',
   OPERATION: 'OPERATION',
   REPORTS: 'REPORTS'
 }
-
-export const MY_DOC_LINK = 'https://docs.google.com/spreadsheets/d/1kofFdAl6c58w0BjCkaiNaSdQ5LBR8NwgURfd2ajZJpw/edit#gid=597154558'
 
 export const REPLY_KEYBOARD_VALUES = (mainWalletBalance) => [
   ['⬅️Выдаткі па катэгорыях', '➡️Даходы па катэгорыях'],

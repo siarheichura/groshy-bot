@@ -1,25 +1,32 @@
-import { Markup } from 'telegraf'
-import { MY_DOC_LINK, REPLY_KEYBOARD_VALUES, SCENES } from '../../constants.js'
-import { getWallets } from '../../google-spreadsheet/google-spreadsheet.js'
+import { SCENES } from '../../constants.js'
+import { AdminGoogleDoc } from '../../../app.js'
+import { UserDoc } from '../../models/UserDoc.js'
 
-export const startCommandHandler = async (ctx, wallets) => {
-  const { balance, currency } = wallets.find(wallet => wallet.isMain)
+export const startCommandHandler = async (ctx) => {
+  const { doc } = ctx.session.user
+  const userDocLink = doc.link
 
-  await ctx.telegram.setMyCommands([
-    { command: 'start', description: 'start command' }
-  ])
+  const replyMsg = `<a href='${userDocLink}'>Твая таблічка</a>📝`
+  return ctx.replyWithHTML(replyMsg)
 
-  const keyboard = REPLY_KEYBOARD_VALUES(`${balance}${currency}`)
-  const replyMessage = `<a href='${MY_DOC_LINK}'>Твая таблічка</a>📝`
-
-  return ctx.replyWithHTML(
-    replyMessage,
-    Markup.keyboard(keyboard, { columns: 2 }).resize()
-  )
+  // move all commands and buttons setup to some middleware
+  // await ctx.telegram.setMyCommands([
+  //   { command: 'start', description: 'start command' }
+  // ])
+  // const keyboard = REPLY_KEYBOARD_VALUES(`${balance}${currency}`)
+  // return ctx.replyWithHTML(
+  //   replyMessage,
+  //   Markup.keyboard(keyboard, { columns: 2 }).resize()
+  // )
 }
 
 export const hearsBalanceHandler = async ctx => {
-  const wallets = await getWallets()
+  const { id: chatId } = ctx.chat
+  const user = await AdminGoogleDoc.getUser(chatId)
+  const UserGoogleDoc = new UserDoc(user.spreadsheetId)
+  await UserGoogleDoc.start()
+
+  const wallets = await UserGoogleDoc.getWallets()
 
   let string = ''
   wallets.forEach(wallet => {
@@ -27,25 +34,16 @@ export const hearsBalanceHandler = async ctx => {
   })
 
   const replyMessage = `` +
-    `<code>----------------------------------</code>\n` +
+    `<code>------------------------------</code>\n` +
     `<b>⚖️Мой баланс:</b>\n` +
-    `<code>----------------------------------</code>\n` +
     `${string}` +
-    `<code>----------------------------------</code>\n`
+    `<code>------------------------------</code>\n`
 
   return ctx.replyWithHTML(replyMessage)
 }
 
 export const hearsReportNameHandler = ctx => ctx.scene.enter(SCENES.REPORTS)
 
-export const onTextHandler = (ctx, initialState) => {
-  const { wallets, categories } = initialState
-
-  ctx.session.wallets = wallets
-  ctx.session.categories = {
-    expense: categories.filter(category => !category.type).map(category => category.name),
-    income: categories.filter(category => category.type).map(category => category.name)
-  }
-
+export const onTextHandler = (ctx) => {
   return ctx.scene.enter(SCENES.OPERATION)
 }
