@@ -21,13 +21,13 @@ export const getAddOperationReplyMessage = (operation, wallets) => {
   })
 
   return `` +
-    `<code>----------------------------------</code>\n` +
+    `<code>------------------------------</code>\n` +
     `<b>Дададзены новы ${operation.type ? 'даход ⬅️' : 'выдатак ➡️'}:</b>\n` +
     `<b>📝Катэгорыя:</b> <pre>${operation.category}</pre>\n` +
     `<b>💵Сума:</b> <pre>${operation.sum} ${operation.currency}</pre>\n` +
     `<b>💬Каментар:</b> <pre>${operation.comment || ' '}</pre>\n` +
-    `<code>----------------------------------</code>\n` +
+    `<code>------------------------------</code>\n` +
     `<b>⚖️Мой баланс:</b>\n` +
     `${balanceString}` +
-    `<code>----------------------------------</code>\n`
+    `<code>------------------------------</code>\n`
 }

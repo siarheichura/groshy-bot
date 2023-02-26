@@ -1,28 +1,26 @@
 import { Markup } from 'telegraf'
 import { getOperationDataFromMessage, getAddOperationReplyMessage } from '../services/operation.service.js'
 import { ERROR_MESSAGES } from '../../constants.js'
-import { addOperation, getWallets, deleteLastOperation } from '../../google-spreadsheet/google-spreadsheet.js'
 
 export const enterSceneHandler = async ctx => {
-  const { wallets } = ctx.session
-  const mainWallet = wallets.find(wallet => wallet.isMain)
+  const { doc } = ctx.session.user
   const { text } = ctx.message
 
   const operation = await getOperationDataFromMessage(text)
   if (!operation) {
     return ctx.reply(ERROR_MESSAGES.NO_SUM)
   }
+
+  const mainWallet = await doc.getMainWallet()
+  const categories = await doc.getCategories(operation.type)
+  const categoryNamesArray = categories.map(category => category.name)
   ctx.session.operation = {
     ...operation,
     wallet: mainWallet.name,
     currency: mainWallet.currency
   }
 
-  const categories = operation.type
-    ? ctx.session.categories.income
-    : ctx.session.categories.expense
-
-  const categories_keyboard = categories.map(category =>
+  const categories_keyboard = categoryNamesArray.map(category =>
     ({ text: category, callback_data: `category ${category}` })
   )
 
@@ -34,13 +32,11 @@ export const enterSceneHandler = async ctx => {
 
 export const categoryButtonClickHandler = async (ctx) => {
   const category = ctx.match.input.replace('category', '').trim()
-
   const operation = { ...ctx.session.operation, category }
+  const { doc } = ctx.session.user
 
-  await addOperation(operation)
-
-  const wallets = await getWallets()
-  ctx.session.wallets = wallets
+  await doc.addOperation(operation)
+  const wallets = await doc.getWallets()
 
   await ctx.deleteMessage()
   ctx.replyWithHTML(
@@ -52,9 +48,9 @@ export const categoryButtonClickHandler = async (ctx) => {
 
 export const cancelOperationHandler = async (ctx) => {
   const { type } = ctx.session.operation
+  const { doc } = ctx.session.user
 
-  await deleteLastOperation(type)
-
+  await doc.deleteLastOperation(type)
   ctx.answerCbQuery()
   ctx.editMessageText('❌ Адменена')
 }
