@@ -27,9 +27,9 @@ export const SCENES = {
   REPORTS: 'REPORTS'
 }
 
-export const REPLY_KEYBOARD_VALUES = (mainWalletBalance) => [
+export const REPLY_KEYBOARD_VALUES = [
   ['⬅️Выдаткі па катэгорыях', '➡️Даходы па катэгорыях'],
-  [`⚖️Мой баланс: ${mainWalletBalance}`]
+  [`⚖️Мой баланс`]
 ]
 export const REPORT_NAMES = [
   '⬅️Выдаткі па катэгорыях',

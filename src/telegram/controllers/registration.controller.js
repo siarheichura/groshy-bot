@@ -1,7 +1,8 @@
 import { AdminGoogleDoc } from '../../../app.js'
 import dayjs from 'dayjs'
-import { DATE_FORMAT } from '../../constants.js'
+import { DATE_FORMAT, REPLY_KEYBOARD_VALUES } from '../../constants.js'
 import { UserDoc } from '../../models/UserDoc.js'
+import { Markup } from 'telegraf'
 
 const UserGoogleDoc = new UserDoc()
 
@@ -49,7 +50,14 @@ export const hearsGmailHandler = async ctx => {
 
   ctx.session.user = { chatId, username, firstName, lastName, doc: UserGoogleDoc }
 
-  ctx.reply(`Твая таблічка тут: ${UserGoogleDoc.link}`)
+  await ctx.telegram.setMyCommands([
+    { command: 'start', description: 'start command' }
+  ])
+
+  ctx.reply(
+    `Твая таблічка тут: ${UserGoogleDoc.link}`,
+    Markup.keyboard(REPLY_KEYBOARD_VALUES, { columns: 2 }).resize()
+  )
   return ctx.scene.leave()
 }
 
