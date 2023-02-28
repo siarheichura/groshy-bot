@@ -8,16 +8,6 @@ export const startCommandHandler = async (ctx) => {
 
   const replyMsg = `<a href='${userDocLink}'>Твая таблічка</a>📝`
   return ctx.replyWithHTML(replyMsg)
-
-  // move all commands and buttons setup to some middleware
-  // await ctx.telegram.setMyCommands([
-  //   { command: 'start', description: 'start command' }
-  // ])
-  // const keyboard = REPLY_KEYBOARD_VALUES(`${balance}${currency}`)
-  // return ctx.replyWithHTML(
-  //   replyMessage,
-  //   Markup.keyboard(keyboard, { columns: 2 }).resize()
-  // )
 }
 
 export const hearsBalanceHandler = async ctx => {
