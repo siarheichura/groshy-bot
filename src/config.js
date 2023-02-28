@@ -3,7 +3,7 @@ import { config } from 'dotenv'
 config()
 
 export const CONFIG = {
-  TELEGRAM_API_TOKEN: process.env.TELEGRAM_API_TOKEN_DEV,
+  TELEGRAM_API_TOKEN: process.env.TELEGRAM_API_TOKEN,
   GOOGLE_CREDS: {
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
