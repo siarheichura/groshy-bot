@@ -1,35 +1,41 @@
 import { Telegraf, session, Scenes } from 'telegraf'
 import { CONFIG } from '../config.js'
+
+import { authMiddleware } from './middlewares/auth.middleware.js'
 import { operationScene } from './scenes/operation.scene.js'
 import { reportsScene } from './scenes/reports.scene.js'
 import { registrationScene } from './scenes/registration.scene.js'
-import { BOT_COMMANDS, REPORT_NAMES } from '../constants.js'
 import {
   startCommandHandler,
   hearsReportNameHandler,
   onTextHandler,
-  hearsBalanceHandler
+  hearsBalanceHandler,
+  hearsAnything
 } from './controllers/telegram.controller.js'
-import { authMiddleware } from './middlewares/auth.middleware.js'
+
+import { REGEXPS } from './constants/regexps.constants.js'
+import { BOT_COMMANDS } from './constants/bot.constants.js'
+import { REPORT_NAMES } from './constants/shared.constants.js'
+
 
 const bot = new Telegraf(CONFIG.TELEGRAM_API_TOKEN)
 
 export const startBot = async () => {
   const stage = new Scenes.Stage([
+    registrationScene,
     operationScene,
-    reportsScene,
-    registrationScene
+    reportsScene
   ])
 
   bot.use(session())
   bot.use(stage.middleware())
+  bot.use(authMiddleware)
 
-  bot.use(async (ctx, next) => authMiddleware(ctx, next))
-
-  bot.command(BOT_COMMANDS.START, async ctx => await startCommandHandler(ctx))
-  bot.hears(/⚖️Мой баланс/i, async ctx => await hearsBalanceHandler(ctx))
-  bot.hears(REPORT_NAMES, ctx => hearsReportNameHandler(ctx))
-  bot.on('text', ctx => onTextHandler(ctx))
+  bot.command(BOT_COMMANDS.START, startCommandHandler)
+  bot.hears(REGEXPS.BALANCE, hearsBalanceHandler)
+  bot.hears(REPORT_NAMES, hearsReportNameHandler)
+  bot.hears(REGEXPS.START_WITH_PLUS_OR_NUMBER, onTextHandler)
+  bot.hears(REGEXPS.ANY, hearsAnything)
 
   await bot.launch()
 

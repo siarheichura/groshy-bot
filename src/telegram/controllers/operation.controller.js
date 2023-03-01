@@ -1,6 +1,7 @@
 import { Markup } from 'telegraf'
 import { getOperationDataFromMessage, getAddOperationReplyMessage } from '../services/operation.service.js'
-import { ERROR_MESSAGES } from '../../constants.js'
+import { MESSAGES } from '../constants/messages.contants.js'
+import { INLINE_KEYBOARD } from '../constants/bot.constants.js'
 
 export const enterSceneHandler = async ctx => {
   const { doc } = ctx.session.user
@@ -8,7 +9,7 @@ export const enterSceneHandler = async ctx => {
 
   const operation = await getOperationDataFromMessage(text)
   if (!operation) {
-    return ctx.reply(ERROR_MESSAGES.NO_SUM)
+    return ctx.reply(MESSAGES.NO_SUM)
   }
 
   const mainWallet = await doc.getMainWallet()
@@ -25,7 +26,7 @@ export const enterSceneHandler = async ctx => {
   )
 
   await ctx.replyWithHTML(
-    '<b>📄Выберы катэгорыю</b>',
+    MESSAGES.CHOOSE_CATEGORY,
     Markup.inlineKeyboard(categories_keyboard, { columns: 2 })
   )
 }
@@ -41,7 +42,7 @@ export const categoryButtonClickHandler = async (ctx) => {
   await ctx.deleteMessage()
   ctx.replyWithHTML(
     getAddOperationReplyMessage(operation, wallets),
-    Markup.inlineKeyboard([{ text: '🚫 Адмяніць', callback_data: 'DeleteLast' }])
+    Markup.inlineKeyboard([INLINE_KEYBOARD.CANCEL_DELETE_LAST])
   )
   ctx.answerCbQuery()
 }
@@ -52,5 +53,5 @@ export const cancelOperationHandler = async (ctx) => {
 
   await doc.deleteLastOperation(type)
   ctx.answerCbQuery()
-  ctx.editMessageText('❌ Адменена')
+  ctx.editMessageText(MESSAGES.CANCELED)
 }

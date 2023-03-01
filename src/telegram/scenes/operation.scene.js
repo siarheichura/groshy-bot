@@ -1,5 +1,5 @@
 import { Scenes } from 'telegraf'
-import { SCENES } from '../../constants.js'
+import { SCENES } from '../constants/bot.constants.js'
 import {
   enterSceneHandler,
   categoryButtonClickHandler,
@@ -10,6 +10,6 @@ export const operationScene = new Scenes.BaseScene(SCENES.OPERATION)
 
 const includesCategoryRegExp = new RegExp('^category')
 
-operationScene.enter(async ctx => await enterSceneHandler(ctx))
-operationScene.action(includesCategoryRegExp, async ctx => await categoryButtonClickHandler(ctx))
-operationScene.action('DeleteLast', async ctx => await cancelOperationHandler(ctx))
+operationScene.enter(enterSceneHandler)
+operationScene.action(includesCategoryRegExp, categoryButtonClickHandler)
+operationScene.action('DeleteLast', cancelOperationHandler)
