@@ -109,15 +109,15 @@ export class UserDoc extends GoogleSheetsDoc {
     await sheet.clearRows({ start: lastRowIndex, end: lastRowIndex })
   }
 
-  getReportByCategories = async (type, period) => {
+  // { data: [{ category: 'name', sum: 100 }], total: 100 }
+  // (type, from, to)
+  getReportByCategories = async (type, date) => {
     const sheet = type ? this.incomesSheet : this.expensesSheet
-
     const rows = await sheet.getRows()
 
     const operationsByPeriod = rows.filter(row =>
-      dayjs(row[OPERATIONS_SHEET_HEADERS.DATE], DATE_FORMAT).isSame(dayjs(period, DATE_FORMAT), 'month')
+      dayjs(row[OPERATIONS_SHEET_HEADERS.DATE], DATE_FORMAT).isSame(dayjs(date, DATE_FORMAT), 'month')
     )
-
 
     const result = [] // {category: string, sum: number}
     operationsByPeriod.forEach(operation => {
@@ -131,8 +131,12 @@ export class UserDoc extends GoogleSheetsDoc {
       }
     })
 
-    return result
+    const data = result
       .map(r => ({ ...r, sum: r.sum.toFixed(2) }))
       .sort((a, b) => b.sum - a.sum)
+    const total = data.reduce((curr, prev) => curr + +prev.sum, 0)
+
+
+    return { data, total }
   }
 }
