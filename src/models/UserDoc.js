@@ -1,8 +1,8 @@
+import dayjs from 'dayjs'
 import { GoogleSheetsDoc } from './GoogleSheetsDoc.js'
 import { Wallet } from './Wallet.js'
-import { DATE_FORMAT } from '../constants.js'
 import { Category } from './Category.js'
-import dayjs from 'dayjs'
+import { DATE_FORMAT } from '../telegram/constants/shared.constants.js'
 
 const SHEET_TITLES = {
   EXPENSES: 'Выдаткі',
@@ -56,6 +56,8 @@ export class UserDoc extends GoogleSheetsDoc {
   }
 
   copySheets = async (sheets) => {
+
+
     await Promise.all(
       sheets.map(async sheet => await this.copySheet(sheet, this.spreadsheetId))
     )

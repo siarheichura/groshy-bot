@@ -1,22 +1,23 @@
-import { SCENES } from '../../constants.js'
-import { AdminGoogleDoc } from '../../../app.js'
-import { UserDoc } from '../../models/UserDoc.js'
+import { Markup } from 'telegraf'
+import { MESSAGES } from '../constants/messages.contants.js'
+import { SCENES, REPLY_KEYBOARD } from '../constants/bot.constants.js'
 
 export const startCommandHandler = async (ctx) => {
   const { doc } = ctx.session.user
-  const userDocLink = doc.link
 
-  const replyMsg = `<a href='${userDocLink}'>Твая таблічка</a>📝`
-  return ctx.replyWithHTML(replyMsg)
+  await ctx.telegram.setMyCommands([
+    { command: 'start', description: 'My GoogleSheet' }
+  ])
+
+  return ctx.reply(
+    MESSAGES.YOUR_TABLE_LINK(doc.link),
+    Markup.keyboard(REPLY_KEYBOARD).resize()
+  )
 }
 
 export const hearsBalanceHandler = async ctx => {
-  const { id: chatId } = ctx.chat
-  const user = await AdminGoogleDoc.getUser(chatId)
-  const UserGoogleDoc = new UserDoc(user.spreadsheetId)
-  await UserGoogleDoc.start()
-
-  const wallets = await UserGoogleDoc.getWallets()
+  const { doc } = ctx.session.user
+  const wallets = await doc.getWallets()
 
   let string = ''
   wallets.forEach(wallet => {
@@ -34,6 +35,6 @@ export const hearsBalanceHandler = async ctx => {
 
 export const hearsReportNameHandler = ctx => ctx.scene.enter(SCENES.REPORTS)
 
-export const onTextHandler = (ctx) => {
-  return ctx.scene.enter(SCENES.OPERATION)
-}
+export const hearsAnything = ctx => ctx.reply(MESSAGES.NO_SUM)
+
+export const onTextHandler = (ctx) => ctx.scene.enter(SCENES.OPERATION)

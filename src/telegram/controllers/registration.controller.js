@@ -1,41 +1,31 @@
-import { AdminGoogleDoc } from '../../../app.js'
 import dayjs from 'dayjs'
-import { DATE_FORMAT, REPLY_KEYBOARD_VALUES } from '../../constants.js'
+import { AdminGoogleDoc } from '../../../app.js'
 import { UserDoc } from '../../models/UserDoc.js'
-import { Markup } from 'telegraf'
+import { addInitWallet, copySheetsFromAdminDoc, updateUserSheetsTitles } from '../services/registration.service.js'
+import { MESSAGES } from '../constants/messages.contants.js'
+import { REGEXPS } from '../constants/regexps.constants.js'
+import { DATE_FORMAT } from '../constants/shared.constants.js'
 
-const UserGoogleDoc = new UserDoc()
-
-export const enterSceneHandler = async ctx => {
-  const { username } = ctx.chat
-
-  const message = `` +
-    `Прывітанне, <b>${username}!👋</b> Вельмі рады бачыць цябе тут🤗\n` +
-    `\n` +
-    `Калі ласка, <b>увядзі свой паштовы адрас gmail</b> для таго, каб мы падрыхтавалі табліцу ў Google Sheets для цябе.\n` +
-    `\n` +
-    `Дзякуй!🤍❤️🤍`
-
-  ctx.replyWithHTML(message)
+export const greetingStepHandler = ctx => {
+  ctx.replyWithHTML(MESSAGES.GREETING(ctx.chat.username))
+  return ctx.wizard.next()
 }
 
-export const hearsGmailHandler = async ctx => {
-  ctx.reply('Адну хвілінку, падрыхтоўваю табліцу...')
+export const gmailStepHandler = async (ctx) => {
+  if (!REGEXPS.GMAIL.test(ctx.message.text)) {
+    return ctx.reply(MESSAGES.WRONG_EMAIL)
+  }
+
+  ctx.reply(MESSAGES.PREPARING_TABLE)
 
   const { text: email } = ctx.message
   const { id: chatId, username, first_name: firstName, last_name: lastName } = ctx.chat
 
+  const UserGoogleDoc = new UserDoc()
   await UserGoogleDoc.start(email)
-
-  const expensesSheetTemplate = AdminGoogleDoc.getSheetByTitle('Выдаткі')
-  await AdminGoogleDoc.copySheet(expensesSheetTemplate, UserGoogleDoc.spreadsheetId)
-  const incomesSheetTemplate = AdminGoogleDoc.getSheetByTitle('Даходы')
-  await AdminGoogleDoc.copySheet(incomesSheetTemplate, UserGoogleDoc.spreadsheetId)
-  const categoriesSheetTemplate = AdminGoogleDoc.getSheetByTitle('Катэгорыі')
-  await AdminGoogleDoc.copySheet(categoriesSheetTemplate, UserGoogleDoc.spreadsheetId)
-  const walletsSheetTemplate = AdminGoogleDoc.getSheetByTitle('Рахункі')
-  await AdminGoogleDoc.copySheet(walletsSheetTemplate, UserGoogleDoc.spreadsheetId)
-  await UserGoogleDoc.getSheetByIndex(0).delete()
+  await copySheetsFromAdminDoc(UserGoogleDoc)
+  await updateUserSheetsTitles(UserGoogleDoc)
+  await addInitWallet(UserGoogleDoc)
 
   await AdminGoogleDoc.addUser({
     chatId,
@@ -49,36 +39,6 @@ export const hearsGmailHandler = async ctx => {
   })
 
   ctx.session.user = { chatId, username, firstName, lastName, doc: UserGoogleDoc }
-
-  await ctx.telegram.setMyCommands([
-    { command: 'start', description: 'start command' }
-  ])
-
-  ctx.reply(
-    `Твая таблічка тут: ${UserGoogleDoc.link}`,
-    Markup.keyboard(REPLY_KEYBOARD_VALUES, { columns: 2 }).resize()
-  )
+  ctx.reply(MESSAGES.YOUR_TABLE_LINK(UserGoogleDoc.link))
   return ctx.scene.leave()
-}
-
-export const hearsAnyTextHandler = async ctx => {
-  return ctx.reply('👎Некарэктны адрас!')
-}
-
-export const leaveSceneHandler = async () => {
-  await UserGoogleDoc.getSheetByTitle('Copy of Выдаткі').updateProperties({ title: 'Выдаткі' })
-  await UserGoogleDoc.getSheetByTitle('Copy of Даходы').updateProperties({ title: 'Даходы' })
-  await UserGoogleDoc.getSheetByTitle('Copy of Катэгорыі').updateProperties({ title: 'Катэгорыі' })
-  await UserGoogleDoc.getSheetByTitle('Copy of Рахункі').updateProperties({ title: 'Рахункі' })
-
-  const walletsSheet = UserGoogleDoc.getSheetByTitle('Рахункі')
-  await walletsSheet.addRow([
-    'Мой рахуначак',
-    '1',
-    'GEL',
-    '=E2+F2-G2',
-    '0',
-    '=СУММЕСЛИ(\'Даходы\'!D2:D, A2, \'Даходы\'!C2:C)',
-    '=СУММЕСЛИ(\'Выдаткі\'!D2:D, A2, \'Выдаткі\'!C2:C)'
-  ])
 }

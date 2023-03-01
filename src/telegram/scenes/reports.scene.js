@@ -1,7 +1,7 @@
 import { Scenes } from 'telegraf'
-import { SCENES } from '../../constants.js'
 import { enterSceneHandler } from '../controllers/reports.controller.js'
+import { SCENES } from '../constants/bot.constants.js'
 
 export const reportsScene = new Scenes.BaseScene(SCENES.REPORTS)
 
-reportsScene.enter(async ctx => await enterSceneHandler(ctx))
+reportsScene.enter(enterSceneHandler)

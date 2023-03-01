@@ -1,4 +1,4 @@
-import { OPERATION_TYPES } from '../../constants.js'
+import { OPERATION_TYPES } from '../constants/shared.constants.js'
 
 export const getOperationDataFromMessage = async (message) => {
   let [sum, ...comment] = message.split(' ')

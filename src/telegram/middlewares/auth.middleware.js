@@ -1,9 +1,8 @@
 import { AdminGoogleDoc } from '../../../app.js'
-import { BOT_COMMANDS, SCENES } from '../../constants.js'
 import { UserDoc } from '../../models/UserDoc.js'
+import { SCENES, BOT_COMMANDS } from '../constants/bot.constants.js'
 
 export const authMiddleware = async (ctx, next) => {
-  console.log('CTX SESSION START: ', ctx.session)
   if (ctx.session.user) {
     return next()
   }
