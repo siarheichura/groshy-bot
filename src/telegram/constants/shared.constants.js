@@ -9,3 +9,7 @@ export const REPORT_NAMES = [
   '⬅️Выдаткі па катэгорыях',
   '➡️Даходы па катэгорыях'
 ]
+export const REPORTS = {
+  EXPENSES_BY_CATEGORIES: '⬅️Выдаткі па катэгорыях',
+  INCOMES_BY_CATEGORIES: '➡️Даходы па катэгорыях',
+}

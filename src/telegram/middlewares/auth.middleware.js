@@ -7,7 +7,7 @@ export const authMiddleware = async (ctx, next) => {
     return next()
   }
   const { id: chatId, username, first_name: firstName, last_name: lastName } = ctx.chat
-  const { text } = ctx.message
+  const text = ctx.message?.text
 
   const user = await AdminGoogleDoc.getUser(chatId)
   if (user) {

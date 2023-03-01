@@ -19,11 +19,6 @@ export const INLINE_KEYBOARD = {
   CANCEL_DELETE_LAST: { text: BUTTON_TEXTS.CANCEL, callback_data: CALLBACK_DATAS.DELETE_LAST }
 }
 
-
-
 export const BOT_COMMANDS = {
   START: '/start'
 }
-
-
-
