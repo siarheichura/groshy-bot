@@ -51,5 +51,4 @@ export const nextPreviousHandler = async (ctx) => {
 
 export const leaveSceneHandler = (ctx) => {
   delete ctx.session.report
-  console.log('REPORT BYE: ', ctx.session)
 }

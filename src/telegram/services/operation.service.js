@@ -2,16 +2,11 @@ import { OPERATION_TYPES } from '../constants/shared.constants.js'
 
 export const getOperationDataFromMessage = async (message) => {
   let [sum, ...comment] = message.split(' ')
-
-  if (!isNaN(+sum)) {
-    sum = sum.replace(/,/g, '.')
-  } else {
-    return
-  }
-
   const type = sum[0] === '+' ? OPERATION_TYPES.INCOMES : OPERATION_TYPES.EXPENSES
+  sum = +sum.replace(/,/g, '.').replace('+', '')
+  if (isNaN(+sum)) return
 
-  return { sum, comment: comment.join(' '), type }
+  return { sum: sum.toFixed(2), comment: comment.join(' '), type }
 }
 
 export const getAddOperationReplyMessage = (operation, wallets) => {

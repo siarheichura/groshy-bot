@@ -55,14 +55,6 @@ export class UserDoc extends GoogleSheetsDoc {
     return this.getSheetByTitle(SHEET_TITLES.INCOMES)
   }
 
-  copySheets = async (sheets) => {
-
-
-    await Promise.all(
-      sheets.map(async sheet => await this.copySheet(sheet, this.spreadsheetId))
-    )
-  }
-
   getWallets = async () => {
     const rows = await this.walletSheet.getRows()
     return rows.map(row =>
@@ -96,7 +88,7 @@ export class UserDoc extends GoogleSheetsDoc {
     await sheet.addRow([
       dayjs().format(DATE_FORMAT),
       operation.category,
-      operation.sum.replace('.', ','),
+      operation.sum,
       operation.wallet,
       operation.comment
     ])
