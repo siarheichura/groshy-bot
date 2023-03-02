@@ -6,5 +6,4 @@ export const reportsScene = new Scenes.BaseScene(SCENES.REPORTS)
 
 reportsScene.enter(enterSceneHandler)
 reportsScene.action(['previous', 'next'], nextPreviousHandler)
-// reportsScene.leave(() => {console.log('REPORTS LEAVE')})
 reportsScene.leave(leaveSceneHandler)

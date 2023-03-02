@@ -10,7 +10,6 @@ import {
   hearsReportNameHandler,
   onTextHandler,
   hearsBalanceHandler,
-  hearsAnything
 } from './controllers/telegram.controller.js'
 
 import { REGEXPS } from './constants/regexps.constants.js'
@@ -34,8 +33,7 @@ export const startBot = async () => {
   bot.command(BOT_COMMANDS.START, startCommandHandler)
   bot.hears(REGEXPS.BALANCE, hearsBalanceHandler)
   bot.hears(REPORT_NAMES, hearsReportNameHandler)
-  bot.hears(REGEXPS.START_WITH_PLUS_OR_NUMBER, onTextHandler)
-  bot.hears(REGEXPS.ANY, hearsAnything)
+  bot.hears(REGEXPS.ANY, onTextHandler)
 
   await bot.launch()
 
