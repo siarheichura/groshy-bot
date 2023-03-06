@@ -1,24 +1,21 @@
-import { startBot } from './src/telegram/telegram.js'
-import { AdminDoc } from './src/models/AdminDoc.js'
-import { CONFIG } from './src/config.js'
+import mongoose from 'mongoose'
+import { startTgBot } from './tg.js'
 
-import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+const DB_URL = 'mongodb+srv://siarheichura:Nastyshka-14@hrosyclaster.iqdoeht.mongodb.net'
 
-dayjs.extend(customParseFormat)
-
-export const AdminGoogleDoc = new AdminDoc(CONFIG.ADMIN_GOOGLE_SPREADSHEET_ID)
-
-const startProject = async () => {
+const start = async () => {
   try {
-    await AdminGoogleDoc.start()
-    console.log('Spreadsheet started...')
+    await mongoose.connect(DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: 'hrosy'
+    })
 
-    startBot()
+    startTgBot()
     console.log('Bot started...')
   } catch (err) {
     console.log('Failed starting project', err)
   }
 }
 
-startProject()
+start().catch()
