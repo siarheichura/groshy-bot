@@ -1,14 +1,15 @@
 import { model, Schema } from 'mongoose'
+import { ICategory, IOperation, IUser, IWallet } from './interfaces'
 
-const walletSchema = new Schema({
+const walletSchema = new Schema<IWallet>({
   balance: { type: Number, required: true, default: 0 },
   currency: { type: String }
 })
-const categorySchema = new Schema({
+const categorySchema = new Schema<ICategory>({
   type: { type: String, required: true },
-  name: { type: String, required: true },
+  name: { type: String, required: true }
 })
-const operationSchema = new Schema({
+const operationSchema = new Schema<IOperation>({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   type: { type: String, required: true },
   category: { type: String, required: true },
@@ -16,20 +17,14 @@ const operationSchema = new Schema({
   comment: { type: String }
 }, { timestamps: true })
 
-const initWallet = {
-  balance: 0,
-  currency: ''
-}
-
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
   chatId: { type: String, required: true },
   username: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  wallet: { type: walletSchema, required: true, default: initWallet },
-  stash: { type: walletSchema, required: true, default: initWallet },
-  categories: [categorySchema],
-  // deletedAt: { type: Date, default: null }
+  wallet: { type: walletSchema, required: true, default: { balance: 0, currency: '' } },
+  stash: { type: walletSchema, required: true, default: { balance: 0, currency: '' } },
+  categories: [categorySchema]
 }, {
   timestamps: true
 })
