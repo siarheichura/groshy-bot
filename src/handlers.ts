@@ -85,7 +85,6 @@ export const botHandlers = (bot: Telegraf<IContext>) => {
     const { data } = ctx.callbackQuery as { data: string }
     const operationId = data.split(' ')[1]
     const operation = await OperationModel.findOneAndDelete({ _id: operationId })
-    console.log('DELETED: ', operation)
     await UserModel.findOneAndUpdate(
       { chatId },
       { $inc: { 'wallet.balance': operation!.type === 'income' ? -operation!.sum : operation!.sum } }
