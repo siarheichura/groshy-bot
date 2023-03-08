@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import { Context } from 'telegraf'
+import { Dayjs } from 'dayjs'
 
 interface ISessionData {
   operation?: {
@@ -45,3 +46,27 @@ export interface IOperation {
 
 export type OperationType = 'income' | 'expense'
 
+export interface IReportItem {
+  category: string
+  sum: number
+}
+
+export interface IReport {
+  data: IReportItem[]
+  total: number
+}
+
+export interface IReportDates {
+  prev: Dayjs
+  next: Dayjs
+  curr: Dayjs
+  period: {
+    start: Dayjs
+    end: Dayjs
+  }
+}
+
+export interface IInlineKeyboard {
+  text: string
+  callback_data: string
+}

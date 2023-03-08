@@ -1,5 +1,6 @@
-import { model, Schema } from 'mongoose'
-import { ICategory, IOperation, IUser, IWallet } from './interfaces'
+import { Aggregate, model, Schema, Types } from 'mongoose'
+import { Dayjs } from 'dayjs'
+import { ICategory, IOperation, IReport, IUser, IWallet, OperationType } from './interfaces'
 
 const walletSchema = new Schema<IWallet>({
   balance: { type: Number, required: true, default: 0 },
@@ -31,3 +32,19 @@ const userSchema = new Schema<IUser>({
 
 export const UserModel = model('User', userSchema)
 export const OperationModel = model('Operation', operationSchema)
+
+export const getReportByCategories = async (
+  userId: Types.ObjectId,
+  type: OperationType,
+  period: { start: Dayjs, end: Dayjs }
+): Promise<Aggregate<IReport> | undefined> => {
+  const report = await OperationModel.aggregate([
+    { $match: { user: userId, type, createdAt: { $gte: period.start.toDate(), $lte: period.end.toDate() } } },
+    { $group: { _id: '$category', sum: { $sum: '$sum' } } },
+    { $project: { _id: 0, category: '$_id', sum: { $sum: '$sum' } } },
+    { $sort: { sum: -1 } },
+    { $group: { _id: null, data: { $push: '$$ROOT' }, total: { $sum: '$sum' } } },
+    { $project: { _id: 0, data: '$data', total: '$total' } }
+  ])
+  return report[0]
+}

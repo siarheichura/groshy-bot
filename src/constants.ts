@@ -2,11 +2,12 @@ import { IOperation } from './interfaces'
 
 export const BOT_COMMANDS = [
   { command: 'start', description: 'heeeeey ;)' },
-  { command: 'balance', description: 'show my balance' }
+  { command: 'balance', description: 'show my balance' },
+  { command: 'report', description: 'get month report by categories' }
 ]
 
 export const MESSAGES = {
-  GREETING: (username: string) => `` +
+  GREETING: (username: string) =>
     `Прывітанне, <b>${username}!👋</b> Вельмі рады бачыць цябе тут🤗\n` +
     `\n` +
     `1. Адпраў мне выдатак у фармаце <b>[колькі] [каментар(не абавязкова)].</b> \n` +
@@ -16,7 +17,7 @@ export const MESSAGES = {
     `\n` +
     `🤍❤️🤍`,
 
-  OPERATION_ADDED: (operation: IOperation) => `` +
+  OPERATION_ADDED: (operation: IOperation) =>
     `<code>------------------------------</code>\n` +
     `<b>Дададзены новы ${operation.type === 'income' ? 'даход➕' : 'выдатак➖'}:</b>\n` +
     `<b>📝Катэгорыя:</b> <pre>${operation.category}</pre>\n` +
