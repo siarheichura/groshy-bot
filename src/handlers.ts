@@ -23,7 +23,12 @@ export const botHandlers = (bot: Telegraf<IContext>) => {
       })
     }
     return ctx.replyWithHTML(MESSAGES.GREETING(username!))
-    // Markup.keyboard([{ text: 'Wallet settings', web_app: { url: 'https://www.youtube.com/' } }]).resize()
+    // return ctx.replyWithHTML(MESSAGES.GREETING(username!), Markup.keyboard([
+    //   Markup.button.webApp(
+    //     'Open',
+    //     'https://hrosy-bot-ng-production.up.railway.app/'
+    //   )
+    // ]).resize())
   })
 
   bot.command('balance', async ctx => {
