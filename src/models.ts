@@ -41,9 +41,9 @@ export const getReportByCategories = async (
   const report = await OperationModel.aggregate([
     { $match: { user: userId, type, createdAt: { $gte: period.start.toDate(), $lte: period.end.toDate() } } },
     { $group: { _id: '$category', sum: { $sum: '$sum' } } },
-    { $project: { _id: 0, category: '$_id', sum: { $sum: '$sum' } } },
+    { $project: { _id: 0, category: '$_id', sum: { $sum: { $round: ['$sum', 2] } } } },
     { $sort: { sum: -1 } },
-    { $group: { _id: null, data: { $push: '$$ROOT' }, total: { $sum: '$sum' } } },
+    { $group: { _id: null, data: { $push: '$$ROOT' }, total: { $sum: { $round: ['$sum', 2] } } } },
     { $project: { _id: 0, data: '$data', total: '$total' } }
   ])
   return report[0]
