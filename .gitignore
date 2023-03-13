@@ -1,4 +1,8 @@
+.idea
+.vscode
 .env
 node_modules
-.idea
-spreadsheet-config.json
+dist/
+build/
+_models_old
+_telegram_old

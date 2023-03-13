@@ -1,0 +1,17 @@
+[
+  {
+    "user": {
+      "$oid": "6406251ea4c9eacceb96000d"
+    },
+    "type": "expense",
+    "category": "\uD83D\uDE8CТранспорт",
+    "sum": 0.6,
+    "comment": "автобус х2",
+    "createdAt": {
+      "$date": "2023-03-07T00:00:00.000+00:00"
+    },
+    "updatedAt": {
+      "$date": "2023-03-07T00:00:00.000+00:00"
+    }
+  }
+]
