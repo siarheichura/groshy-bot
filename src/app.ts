@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import { CONFIG } from './config'
-import { startBot } from './telegram'
 import app from './api'
+import { startBot } from './telegram'
+import { CONFIG } from './config'
 
 const start = async (): Promise<void> => {
   try {
