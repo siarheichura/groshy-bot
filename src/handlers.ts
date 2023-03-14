@@ -1,6 +1,8 @@
 import { Markup, Telegraf } from 'telegraf'
 import dayjs from 'dayjs'
-import { getReportByCategories, OperationModel, UserModel } from './models'
+import { addCategory, deleteCategory, getAllCategories, UserModel } from './models/User'
+import { OperationModel, getReportByCategories } from './models/Operation'
+
 import { getReportByCategoriesReplyMessage, getReportDates, getReportKeyboard } from './services/report.service'
 import { IContext, OperationType } from './interfaces'
 import basicCategories from './assets/basicCategories.json'
@@ -12,23 +14,76 @@ export const botHandlers = (bot: Telegraf<IContext>) => {
     const { username, first_name: firstName, last_name: lastName } = ctx.from
     const user = await UserModel.findOne({ chatId })
     if (!user) {
-      const expenseCategories = basicCategories.expense.map(category => ({ type: 'expense', name: category }))
-      const incomeCategories = basicCategories.income.map(category => ({ type: 'income', name: category }))
       await UserModel.create({
         chatId,
         username,
         firstName,
         lastName,
-        categories: [...expenseCategories, ...incomeCategories]
+        categories: {
+          expense: [...basicCategories.expense],
+          income: [...basicCategories.income]
+        }
       })
     }
-    return ctx.replyWithHTML(MESSAGES.GREETING(username!))
-    // return ctx.replyWithHTML(MESSAGES.GREETING(username!), Markup.keyboard([
-    //   Markup.button.webApp(
-    //     'Open',
-    //     'https://hrosy-bot-ng-production.up.railway.app/'
-    //   )
-    // ]).resize())
+
+    return ctx.replyWithHTML(
+      MESSAGES.GREETING(username!),
+      Markup.keyboard(['⚙️Налады']).resize()
+    )
+  })
+
+  bot.hears(/^add category/i, async ctx => {
+    const { id: chatId } = ctx.chat
+    const [_, __, type, ...name] = ctx.match.input.trim().split(' ')
+
+    if (!['expense', 'income'].includes(type) || !name.length) {
+      return ctx.replyWithHTML(
+        'Для дадання катэгорыі адпраў паведамленне ў фармаце:\n' +
+        '<b>[add category] [expense / income] [Назва катэгорыі]</b>\n' +
+        'Напрыклад: <pre>add category expense 🍔Фаст фуд</pre>'
+      )
+    } else {
+      await addCategory(chatId, name.join(' '), type as OperationType)
+      return ctx.replyWithHTML(
+        `Новая катэгорыя ${type === 'expense' ? 'выдаткаў' : 'даходаў'} <b>${name}</b> дададзена`
+      )
+    }
+  })
+
+  bot.hears(/^delete category/i, async ctx => {
+    const { id: chatId } = ctx.chat
+    const [_, __, type, ...name] = ctx.match.input.trim().split(' ')
+
+    if (!['expense', 'income'].includes(type) || !name.length) {
+      return ctx.replyWithHTML(
+        'Для дадання катэгорыі адпраў паведамленне ў фармаце:\n' +
+        '<b>[add category] [expense / income] [Назва катэгорыі]</b>\n' +
+        'Напрыклад: <pre>add category expense 🍔Фаст фуд</pre>'
+      )
+    } else {
+      await deleteCategory(chatId, name.join(' '), type as OperationType)
+      return ctx.replyWithHTML(
+        `Катэгорыя ${type === 'expense' ? 'выдаткаў' : 'даходаў'} <b>${name}</b> выдалена`
+      )
+    }
+
+  })
+
+  bot.hears('⚙️Налады', ctx => {
+    ctx.reply(
+      '⚙️Налады',
+      Markup.inlineKeyboard([
+        { text: '🏷️Катэгорыі', callback_data: 'settings_categories' }
+      ])
+    )
+  })
+
+  bot.action('settings_categories', async ctx => {
+    const { id: chatId } = ctx.chat!
+    const categories = await getAllCategories(chatId)
+
+    const message = MESSAGES.CATEGORIES_SETTING(categories)
+    return ctx.editMessageText(message, { parse_mode: 'HTML' })
   })
 
   bot.command('balance', async ctx => {
@@ -111,18 +166,15 @@ export const botHandlers = (bot: Telegraf<IContext>) => {
     }
 
     const user = await UserModel.findOne({ chatId })
-    if (!user) {
-      return ctx.reply('no user')
-    }
-    const categoriesByType = user.categories.filter(category => category.type === type)
+    const categoriesByType = user!.categories[type]
 
     const categories_keyboard = categoriesByType.map(category =>
-      ({ text: category.name, callback_data: `category ${category.name}` })
+      ({ text: category, callback_data: `category ${category}` })
     )
 
-    const updBalance = type === 'income' ? user.wallet.balance + sum : user.wallet.balance - sum
+    const updBalance = type === 'income' ? user!.wallet.balance + sum : user!.wallet.balance - sum
     ctx.session = {
-      operation: { type, sum, comment, user: user.id },
+      operation: { type, sum, comment, user: user!.id },
       updBalance
     }
 

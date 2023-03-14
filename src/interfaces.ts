@@ -1,8 +1,10 @@
 import { Types } from 'mongoose'
-import { Context } from 'telegraf'
+import { Context, Scenes } from 'telegraf'
 import { Dayjs } from 'dayjs'
 
 interface ISessionData {
+  categoriesToDelete?: any[]
+  categories?: any[]
   operation?: {
     type: string,
     sum: number,
@@ -23,7 +25,11 @@ export interface IUser {
   lastName: string
   wallet: IWallet
   stash: IWallet
-  categories: ICategory[]
+  // categories: ICategory[]
+  categories: {
+    expense: string[]
+    income: string[]
+  }
 }
 
 export interface IWallet {
@@ -32,6 +38,7 @@ export interface IWallet {
 }
 
 export interface ICategory {
+  _id: Types.ObjectId
   type: OperationType
   name: string
 }

@@ -20,3 +20,4 @@ export const startBot = async (): Promise<void> => {
     bot.telegram.setWebhook(CONFIG.TG.WEBHOOK_URL)
   }
 }
+

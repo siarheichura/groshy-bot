@@ -27,5 +27,28 @@ export const MESSAGES = {
   BALANCE: (balance: number) =>
     `<code>------------------------------</code>\n` +
     `<b>⚖️Мой баланс: ${balance}GEL</b>\n` +
-    `<code>------------------------------</code>\n`
+    `<code>------------------------------</code>\n`,
+
+  CATEGORIES_SETTING: (categories: { expense: string[], income: string[] }) => {
+    const expenseCategoriesString = categories.expense.reduce((prev, curr) => prev + `<pre>${curr}</pre>` + ' | ', '')
+    const incomeCategoriesString = categories.income.reduce((prev, curr) => prev + `<pre>${curr}</pre>` + ' | ', '')
+
+    return 'Каб <u>дадаць катэгорыю</u>, адпраў мне паведамленне ў наступным фармаце: \n' +
+      '<b>[add category] [expense / income] [Назва катэгорыі]</b>\n' +
+      '(напрыклад, <pre>add category expense 🍔Фаст фуд</pre>)\n' +
+      '\n' +
+      'Каб <u>выдаліць катэгорыю</u>, адпраў мне паведамленне ў наступным фармаце:\n' +
+      '<b>[delete category] [expense / income] [Назва катэгорыі]</b>\n' +
+      '(напрыклад, <pre>delete category income 💰Аванс</pre>)\n' +
+      '\n' +
+      '<b>Твае катэгорыі:</b> \n' +
+      '\n' +
+      `<b>Даходы:</b> ${expenseCategoriesString}\n` +
+      '\n' +
+      `<b>Выдаткі:</b> ${incomeCategoriesString}`
+  }
+}
+
+export const SCENES = {
+  CATEGORIES: 'CATEGORIES'
 }
